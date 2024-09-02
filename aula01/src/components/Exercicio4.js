@@ -1,11 +1,15 @@
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 
-const Exercicio4 = ({itens}) => {
+const Exercicio4 = () => {
+
+    const meusItens = ['notebook, mouse, teclado, placa de video, controle']
+
+    
   return (
     <View style={styles.container}>
-        {itens.map((item, index) => (
-            <Text key={index} style={styles.itemText}>
+        {meusItens.map((item, index) => (
+            <Text key={index} style={styles.Text}>
                 {item}
                 </Text>
         ))}

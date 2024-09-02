@@ -4,11 +4,11 @@ import Exercicio4 from './src/components/Exercicio4'
 
 const App = () => {
 
-  const meusItens = ['notebook, mouse, teclado, placa de video, controle']
-  return (
-    <SafeAreaView>
-      <Exercicio4 itens={meusItens}/>
-    </SafeAreaView>
+  
+    return (
+    <View>
+      <Exercicio4 />
+    </View>
   )
 }
 
