@@ -1,13 +1,14 @@
 import { View, Text, SafeAreaView } from 'react-native'
 import React from 'react'
-import Exercicio4 from './src/components/Exercicio4'
+import Exercicio02 from './src/components/Exercicio02'
+
 
 const App = () => {
 
   
     return (
     <View>
-      <Exercicio4 />
+      <Exercicio02/>
     </View>
   )
 }
