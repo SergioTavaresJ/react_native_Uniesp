@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TextInput, Button, FlatList } from 'react-native'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import React from 'react'
 
 const Exercicio5 = () => {
@@ -8,10 +8,35 @@ const Exercicio5 = () => {
 
     const [lista, setLista] = useState([])
 
+    useEffect(() => {
+      const carregaTarefa = async () => {
+        try {
+          const tarefasSalvas = await AsyncStorage.getItem('lista')
+          if (tarefasSalvas) {
+            setLista(JSON.parse(tarefasSalvas))
+          }
+        } catch (error) {
+          console.log('Erro ao carregar tarefas:' ,error)
+        }
+      }
+
+      carregaTarefa()
+    }, [])
+
+    const salvarTarefa = async (tarefa) => {
+      try {
+        await AsyncStorage.setItem('lista',JSON.stringify(tarefa))
+      } catch (error) {
+        console.log('Erro ao salvar tarefas:', error)
+      }
+    }
+
     const addtarefa = () => {
       if (tarefa.trim()) {
-        setLista([...lista, {id:Date.now().toString(), value:tarefa}])
+        const novaListaTarefa = [...lista, {id:Date.now().toString(), value:tarefa}]
+        setLista(novaListaTarefa)
         setTarefa('')
+        salvarTarefa(novaListaTarefa)
       }
     }
 
@@ -35,7 +60,7 @@ const Exercicio5 = () => {
         keyExtractor={(item) => item.id}
         renderItem={({item}) => (
           <View style={styles.taskItem}>
-            <Text>{item.value}</Text>
+            <Text style={styles.tarefaText}>{item.value}</Text>
             </View>
         )}
       />
@@ -66,19 +91,20 @@ const styles=StyleSheet.create({
     },
     input: {
       flex: 1,
-      borderColor: '#ccc',
       borderWidth: 1,
       padding: 10,
       marginRight: 10,
-      borderRadius: 5,
+      borderRadius: 20,
     },
     taskItem: {
       padding: 15,
-      backgroundColor: '#fff',
-      borderBottomColor: '#ccc',
       borderBottomWidth: 1,
       borderRadius: 5,
       marginTop: 10,
+      alignItems: 'flex-end'
+    },
+        tarefaText: {
+      textAlign: 'right'
     },
     title: {
       fontSize: 24,
