@@ -37,7 +37,15 @@ const Exercicio5 = () => {
         setLista(novaListaTarefa)
         setTarefa('')
         salvarTarefa(novaListaTarefa)
+        
       }
+    }
+
+    const apagarTarefa = (tarefaId) => {
+      novaListaTarefa = lista.filter((item) => item.id !== tarefaId)
+      setLista(novaListaTarefa)
+      salvarTarefa(novaListaTarefa)
+      
     }
 
 
@@ -61,6 +69,9 @@ const Exercicio5 = () => {
         renderItem={({item}) => (
           <View style={styles.taskItem}>
             <Text style={styles.tarefaText}>{item.value}</Text>
+            <Button style={styles.removeButton} onPress={() => apagarTarefa(item.id)}/>
+            <Text style={styles.removeButtonText}>Remover</Text>  
+            
             </View>
         )}
       />
@@ -103,7 +114,17 @@ const styles=StyleSheet.create({
       marginTop: 10,
       alignItems: 'flex-end'
     },
-        tarefaText: {
+    removeButton: {
+      borderRadius: 5,
+      padding: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }, 
+    removeButtonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+    },   
+    tarefaText: {
       textAlign: 'right'
     },
     title: {
