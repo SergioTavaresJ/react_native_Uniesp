@@ -9,4 +9,5 @@ const Exercicio01 = ({nome}) => {
   )
 }
 
+
 export default Exercicio01

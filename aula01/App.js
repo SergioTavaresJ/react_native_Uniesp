@@ -1,6 +1,7 @@
 import { View, Text, SafeAreaView } from 'react-native'
 import React from 'react'
-import Exercicio02 from './src/components/Exercicio02'
+import Exercicio4 from './src/components/Exercicio4'
+
 
 
 const App = () => {
@@ -8,7 +9,7 @@ const App = () => {
   
     return (
     <View>
-      <Exercicio02/>
+      <Exercicio4/>
     </View>
   )
 }
