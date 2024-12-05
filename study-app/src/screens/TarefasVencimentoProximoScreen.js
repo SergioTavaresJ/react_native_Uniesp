@@ -2,7 +2,6 @@ import { View, Text, FlatList, StyleSheet } from 'react-native'
 import React, { useContext } from 'react'
 import CartoesEstudoContext from '../contexts/CartoesEstudoContext'
 
-
 const TarefasVencimentoProximoScreen = () => {
 
     const { cartoes } = useContext(CartoesEstudoContext)
@@ -21,16 +20,17 @@ const TarefasVencimentoProximoScreen = () => {
             <Text>Data/Hora de Término: {new Date(item.dataTermino).toLocaleString()}</Text>
         </View>
     )
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Tarefas a Vencer nos Próximos 15 Dias</Text>
-      <FlatList
-        data={cartoesVencimentoProximo}
-        keyExtractor={item => item.id.toString()}
-        renderItem={renderizarCartao}
-    />
-    </View>
-  )
+
+    return (
+        <View style={styles.container}>
+            <Text style={styles.header}>Tarefas a Vencer nos Próximos 15 Dias</Text>
+            <FlatList
+                data={cartoesVencimentoProximo}
+                keyExtractor={item => item.id.toString()}
+                renderItem={renderizarCartao}
+            />
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -62,4 +62,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default TarefasVencimentoProximoScreen
+export default TarefasVencimentoProximoScreen;

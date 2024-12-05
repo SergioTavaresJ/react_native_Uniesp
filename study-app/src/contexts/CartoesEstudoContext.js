@@ -1,37 +1,34 @@
-import React, { createContext, useState, useEffect, useContext } from 'react'
-import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore'
-import { db } from '../config/firebaseConfig'
-import { AuthContext } from './AuthContext'
-
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
+import { db } from '../config/firebaseConfig';
+import { AuthContext } from './AuthContext';
 
 const CartoesEstudoContext = createContext();
 
 export const ProvedorCartoesEstudo = ({ children }) => {
-
     const [cartoes, setCartoes] = useState([]);
-    const { user } = useContext(AuthContext);
+    const { user } = useContext(AuthContext); // Pega o usuário autenticado
 
     useEffect(() => {
         if (user) {
             carregarCartoes();
-
         }
     }, [user]);
 
     const carregarCartoes = async () => {
         try {
-            const q = query(collection(db, 'cartoes'), where('uid', '==', user.uid));
+            const q = query(collection(db, 'cartoes'), where('uid', '==', user.uid)); // Filtra cards pelo UID do usuário
             const cartoesSnapshot = await getDocs(q);
             const cartoesList = cartoesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setCartoes(cartoesList);
         } catch (error) {
-            console.error('Erro ao carregar cartões', error);
+            console.error('Erro ao carregar cartões:', error);
         }
     };
 
     const adicionarCartao = async (cartao) => {
         try {
-            const novoCartao = { ...cartao, uid: user.uid };
+            const novoCartao = { ...cartao, uid: user.uid }; // Adiciona o UID do usuário ao novo card
             const docRef = await addDoc(collection(db, 'cartoes'), novoCartao);
             setCartoes([...cartoes, { id: docRef.id, ...novoCartao }]);
             console.log('Cartão adicionado ao Firestore:', novoCartao);
@@ -45,7 +42,7 @@ export const ProvedorCartoesEstudo = ({ children }) => {
             const cartaoRef = doc(db, 'cartoes', id);
             await updateDoc(cartaoRef, atualizacoes);
             setCartoes(cartoes.map(cartao => (cartao.id === id ? { ...cartao, ...atualizacoes } : cartao)));
-            console.log('Cartão atualiazado:', { id, ...atualizacoes });
+            console.log('Cartão atualizado:', { id, ...atualizacoes });
         } catch (error) {
             console.error('Erro ao atualizar cartão:', error);
         }
@@ -53,15 +50,13 @@ export const ProvedorCartoesEstudo = ({ children }) => {
 
     const excluirCartao = async (id) => {
         try {
-            await deleteDoc(doc(db, 'cartoes', id))
+            await deleteDoc(doc(db, 'cartoes', id));
             setCartoes(cartoes.filter(cartao => cartao.id !== id));
-            console.log('Cartão excluido com ID:', id)
+            console.log('Cartão excluído com ID:', id);
         } catch (error) {
             console.error('Erro ao excluir cartão:', error);
         }
-
     };
-
 
     return (
         <CartoesEstudoContext.Provider value={{ cartoes, adicionarCartao, atualizarCartao, excluirCartao }}>
@@ -70,5 +65,4 @@ export const ProvedorCartoesEstudo = ({ children }) => {
     );
 };
 
-export default CartoesEstudoContext
-
+export default CartoesEstudoContext;

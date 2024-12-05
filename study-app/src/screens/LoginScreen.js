@@ -1,8 +1,7 @@
-import React, { useState } from 'react'
-import { View, Text, TextInput, Alert, StyleSheet, TouchableOpacity, Image } from 'react-native'
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Image } from 'react-native';
+import { signInWithEmailAndPassword } from '@react-native-firebase/auth'
 import { auth } from '../config/firebaseConfig';
-
 
 const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -12,7 +11,6 @@ const LoginScreen = ({ navigation }) => {
         try {
             await signInWithEmailAndPassword(auth, email, password);
             Alert.alert('Sucesso', 'Login realizado com sucesso!');
-
         } catch (error) {
             Alert.alert('Erro', error.message);
         }
@@ -23,7 +21,7 @@ const LoginScreen = ({ navigation }) => {
             <Image source={require('../../assets/logo.png')} style={styles.logo} />
             <Text style={styles.title}>Bem-vindo</Text>
             <Text style={styles.subtitle}>Faça login para continuar</Text>
-
+            
             <TextInput
                 placeholder="Email"
                 value={email}
@@ -32,7 +30,6 @@ const LoginScreen = ({ navigation }) => {
                 keyboardType="email-address"
                 autoCapitalize="none"
             />
-
             <TextInput
                 placeholder="Senha"
                 value={password}
@@ -107,4 +104,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default LoginScreen
+export default LoginScreen;

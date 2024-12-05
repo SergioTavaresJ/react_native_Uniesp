@@ -1,97 +1,99 @@
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native'
-import React, { useContext } from 'react'
-import CartoesEstudoContext from '../contexts/CartoesEstudoContext'
-import { MaterialIcons } from 'react-native-vector-icons'
+import React, { useContext } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import CartoesEstudoContext from '../contexts/CartoesEstudoContext';
+import { MaterialIcons } from 'react-native-vector-icons';
 
 const ListaCartaoScreen = ({ navigation }) => {
     const { cartoes, excluirCartao } = useContext(CartoesEstudoContext);
 
-    const confimarExclusao = (id) => {
+    const confirmarExclusao = (id) => {
         Alert.alert("Excluir Cartão", "Tem certeza que deseja excluir este cartão?", [
             { text: "Cancelar", style: "cancel" },
-            { text: "Excluir", onPress: () => excluirCartao(id), style: "destructive"}
+            { text: "Excluir", onPress: () => excluirCartao(id), style: "destructive" }
         ]);
     };
 
     const renderizarCartao = ({ item }) => {
         let cardStyle = styles.card;
         if (item.status === 'backlog') {
-            cardStyle = {...styles.card, ...styles.cardBacklog}
+            cardStyle = { ...styles.card, ...styles.cardBacklog };
         } else if (item.status === 'done') {
-            cardStyle = {...styles.card, ...styles.cardDone}
+            cardStyle = { ...styles.card, ...styles.cardDone };
         } else if (item.status === 'in_progress') {
-            cardStyle = {...styles.card, ...styles.cardInProgress}
+            cardStyle = { ...styles.card, ...styles.cardInProgress };
         }
-    
-  return (
-    <View style={cardStyle}>
-      <Text style={styles.cardTitle}>{item.titulo}</Text>
-      <Text style={styles.cardText}>Status: {item.status}</Text>
-      <Text style={styles.cardtext}>Data: {new Date(item.dataTermino).toLocaleDateString()}</Text>
-      <View style={styles.cardButtons}>
-        <TouchableOpacity onPress={() => navigation.navigate('EdicaoCartao', {id: item.id})} style={styles.iconButton}>
-            <MaterialIcons name="edit" size={18} color="#ff6347" />
-            
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => confirmarExclusao(item.id)} style={styles.iconButton}>
-            <MaterialIcons name="delete" size={18} color="#ff6347" />
-            
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
+
+        return (
+            <View style={cardStyle}>
+                <Text style={styles.cardTitle}>{item.titulo}</Text>
+                <Text style={styles.cardText}>Status: {item.status}</Text>
+                <Text style={styles.cardText}>Data: {new Date(item.dataTermino).toLocaleDateString()}</Text>
+                <View style={styles.cardButtons}>
+                    <TouchableOpacity onPress={() => navigation.navigate('EdicaoCartao', { id: item.id })} style={styles.iconButton}>
+                        <MaterialIcons name="edit" size={18} color="#007bff" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => confirmarExclusao(item.id)} style={styles.iconButton}>
+                        <MaterialIcons name="delete" size={18} color="#ff6347" />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        );
+    };
+
+    const cartoesAgrupadosPorStatus = (status) => cartoes.filter(cartao => cartao.status === status);
+
+    // Filtra os cartões próximos ao vencimento (15 dias)
+    const cartoesVencimentoProximo = cartoes.filter(cartao => {
+        const dataTermino = new Date(cartao.dataTermino);
+        const diferencaDias = (dataTermino - new Date()) / (1000 * 60 * 60 * 24);
+        return diferencaDias >= 0 && diferencaDias <= 15;
+    });
+
+    return (
+        <View style={styles.container}>
+            {/* Botão para ver tarefas próximas ao vencimento */}
+            <TouchableOpacity style={styles.dueSoonButton} onPress={() => navigation.navigate('TarefasVencimentoProximo')}>
+                <Text style={styles.dueSoonButtonText}>Tarefas a Vencer: {cartoesVencimentoProximo.length}</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.sectionTitle}>Em Progresso</Text>
+            <FlatList 
+                data={cartoesAgrupadosPorStatus('in_progress')}
+                keyExtractor={(item) => item.id}
+                renderItem={renderizarCartao}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+            />
+
+            <View style={styles.divider} />
+
+            <Text style={styles.sectionTitle}>Concluído</Text>
+            <FlatList 
+                data={cartoesAgrupadosPorStatus('done')}
+                keyExtractor={(item) => item.id}
+                renderItem={renderizarCartao}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+            />
+
+            <View style={styles.divider} />
+
+            <Text style={styles.sectionTitle}>Backlog</Text>
+            <FlatList 
+                data={cartoesAgrupadosPorStatus('backlog')}
+                keyExtractor={(item) => item.id}
+                renderItem={renderizarCartao}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+            />
+
+            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('EdicaoCartao')}>
+                <MaterialIcons name="add" size={24} color="#ffffff" />
+                <Text style={styles.addButtonText}>Adicionar Novo Cartão</Text>
+            </TouchableOpacity>
+        </View>
+    );
 };
-
-const cartoesAgrupadosPorStatus = (status) => cartoes.filter(cartao => cartao.status === status);
-
-const cartoesVencimentoProximo = cartoes.filter(cartao => {
-    const dataTermino = new Date(cartao.dataTermino);
-    const diferencaDias = (dataTermino - new Date()) / (1000 * 60 * 60 * 24);
-    return diferencaDias >= 0 && diferencaDias <= 15;
-});
-
-return (
-    <View style={styles.container}>
-        <TouchableOpacity style={styles.dueSoonButton} onPress={() => navigation.navigate('TarefasVencimentoProximo')}>
-            <Text style={styles.dueSoonButtonText}>Tarefas a Vencer: {cartoesVencimentoProximo.length}</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.sectionTitle}>Em progresso</Text>
-        <FlatList
-            data={cartoesAgrupadosPorStatus('in_progress')}
-            keyExtractor={(item) => item.id}
-            renderItem={renderizarCartao}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-        />
-        <View style={styles.divider} />
-        <Text style={styles.sectionTitle}>Concluido</Text>
-        <FlatList
-            data={cartoesAgrupadosPorStatus('done')}
-            keyExtractor={(item) => item.id}
-            renderItem={renderizarCartao}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-        />
-
-        <View style={styles.divider} />
-        <Text style={styles.sectionTitle}>Backlog</Text>
-        <FlatList
-            data={cartoesAgrupadosPorStatus('backlog')}
-            keyExtractor={(item) => item.id}
-            renderItem={renderizarCartao}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-        />
-
-        <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('EdicaoCartao')}>
-            <MaterialIcons name="add" size={24} color="#ffffff" />
-            <Text style={styles.addButtonText}>Adicionar Novo Cartão</Text>
-        </TouchableOpacity>
-    </View>
-)
-}
-
 
 const styles = StyleSheet.create({
     container: {
@@ -178,4 +180,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ListaCartaoScreen
+export default ListaCartaoScreen;
